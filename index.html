@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="kz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жаңа жылдық кеш</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Анимация для кнопки жіберу */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .animated-submit {
+            display: none;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            background: linear-gradient(45deg, #28a745, #218838);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            animation: bounce 1s infinite;
+            margin-top: 10px;
+        }
+
+        .animated-submit:hover {
+            background: linear-gradient(45deg, #218838, #28a745);
+        }
+
+        .animated-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Кнопка для музыки */
+        .music-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            animation: bounce 1s infinite;
+            transition: 0.3s ease-in-out;
+        }
+
+        .music-button:hover {
+            background: linear-gradient(45deg, #0056b3, #007bff);
+        }
+
+        /* Анимация снегопада */
+        body {
+            background-color: #000;
+            color: white;
+            overflow: hidden;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: fall 10s linear infinite, sway 3s ease-in-out infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10px;
+                opacity: 0.8;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes sway {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Снегопад -->
+    <script>
+        for (let i = 0; i < 100; i++) {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.width = snowflake.style.height = Math.random() * 10 + 5 + 'px';
+            snowflake.style.animationDuration = Math.random() * 5 + 5 + 's';
+            document.body.appendChild(snowflake);
+        }
+    </script>
+
+    <div class="container">
+        <h1>Құрметті ұстаздар!</h1>
+        <p>Сіздерді мектебімізде өтетін жаңа жылдық кешімізге шақырамыз!</p>
+        <p>🗓️ Күні: 27 желтоқсан <br> ⏰ Уақыты: 16:00 <br> 📍 Орны: Абай атындағы №2 мектеп</p>
+
+        <!-- Кнопки выбора -->
+        <div id="attendance-options">
+            <button class="button" onclick="selectAttendance('Келемін')">Келемін</button>
+            <button class="button" onclick="selectAttendance('Келмеймін')">Келмеймін</button>
+        </div>
+
+        <!-- Форма для ввода имени и отправки данных -->
+        <form action="https://formspree.io/f/xwpkjpkb" method="POST">
+            <input type="hidden" name="_subject" value="Новый ответ на опрос">
+            <input type="hidden" name="status" id="hidden-status">
+            <div id="name-input" style="display: none; margin-top: 20px;">
+                <label for="name">Өз атыңызды жазыңыз:</label>
+                <input type="text" name="name" id="name" placeholder="Атыңызды енгізіңіз" oninput="checkName()" required>
+                <button type="submit" class="animated-submit">Жіберу</button>
+            </div>
+        </form>
+
+        <!-- Кнопка для музыки -->
+        <button class="music-button" onclick="toggleMusic()">🎵 Музыканы ойнау</button>
+
+        <!-- Сообщение об успешной отправке -->
+        <div id="message" style="display: none;">
+            <p>Сіздің жауабыңыз қабылданды!</p>
+        </div>
+    </div>
+
+    <script>
+        function selectAttendance(status) {
+            document.getElementById("attendance-options").style.display = "none"; 
+            document.getElementById("name-input").style.display = "block"; 
+            document.getElementById("name-input").setAttribute('data-status', status);
+        }
+
+        function checkName() {
+            const name = document.getElementById("name").value;
+            const submitButton = document.getElementById("submit-button");
+            if (name.trim() !== "") {
+                submitButton.style.display = "block";
+            } else {
+                submitButton.style.display = "none";
+            }
+        }
+
+        function submitAttendance() {
+            const name = document.getElementById("name").value.trim();
+            const status = document.getElementById("name-input").getAttribute('data-status');
+            if (name) {
+                document.getElementById("message").style.display = "block";
+                document.getElementById("name-input").style.display = "none";
+                document.getElementById("name").value = "";
+            } else {
+                alert("Атыңызды жазыңыз.");
+            }
+        }
+
+        let isPlaying = false;
+        let audio = new Audio('Wham_-_Last_Christmas_48076479.mp3');
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            isPlaying = !isPlaying;
+        }
+    </script>
+</body>
+</html>
